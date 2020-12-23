@@ -1,0 +1,148 @@
+<html>
+  <body>
+    <head>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+      <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/style-turn-light.css') }}" />
+      <link href= 
+"https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/css/bootstrap-switch-button.min.css"
+              rel="stylesheet" /> 
+        <!--import Bootstrap 4 using cdn-->
+        <link rel="stylesheet" type="text/css"
+              href= 
+"https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" /> 
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+      <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+      <script>$("input.switch").bootstrapSwitch();</script>
+      
+    </head>
+   
+    <div class='status'>Toggled</div>
+    
+    <div class="w3-container">
+      <b id = "floor">{{items[0].floor}}</b>
+    <b id = "room">{{items[0].room_id}}</b>
+    <table class="table  table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Device ID</th>
+          <th scope="col">Device Name</th>
+          <th scope="col">Status</th>
+          <th scope="col">Floor</th>
+          <th scope="col">Room</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <th scope="row" id = "device">{{item.device_id}}</th>
+          <td>{{item.device_name}}</td>
+          <td>
+            {% if item.status == 1 %}
+            <input type="checkbox" 
+                   data-toggle="toggle" 
+                   checked data-width="100" 
+                   data-onstyle="success" data-offstyle="danger" /> 
+            {% else %}
+            <input type="checkbox" 
+                   data-toggle="toggle" 
+                    data-width="100" 
+                   data-onstyle="success" data-offstyle="danger" /> 
+            {% endif %}
+          </td>
+          <td>{{item.floor}}</td>
+          <td>{{item.room_id}}</td>
+        </tr>
+        {% endfor %}
+        <!-- <tr>
+          <th scope="row" id = "device">LIGHT2</th>
+          <td>Light 02</td>
+          <td><input type="checkbox" class='toggle' checked data-toggle="toggle" id = 'but'></td>
+          <td>150</td>
+          <td></td>
+        </tr>
+        <tr>
+          <th scope="row" id = "device">AIR_CONDITIONER1</th>
+          <td>Air Conditioner 01</td>
+          <td><input type="checkbox" class='toggle' checked data-toggle="toggle" id = 'but'></td>
+          <td>500</td>
+          <td></td>
+        </tr>
+        <tr>
+          <th scope="row" id = "device">AIR_CONDITIONER2</th>
+          <td>Air Conditioner 02</td>
+          <td><input type="checkbox" class='toggle' checked data-toggle="toggle" id = 'but'></td>
+          <td>550</td>
+          <td></td>
+        </tr> -->
+      </tbody>
+    </table>
+    </div>
+
+  </body>
+ 
+</html>
+<script>
+    $(document).ready(function() {
+     $('.toggle').click(function(event) {
+      // var element = document.getElementById("but");
+      // while(element){
+      //   if(element.clicked == true){
+      //     var current_status = element.checked;
+      //     break;
+      //   }
+      //   else{
+      //     element = document.getElementById("but");
+      //   }
+      // } 
+      //var current_status = $(this).is(':checked');
+      var room = document.getElementById("room").innerHTML;
+      var b = this.parentNode.parentNode.cells[0].textContent;
+      var current_status = $(event.target).text();
+      if(current_status == 'On' || current_status == 'Off'){
+      $.ajax({
+       url: "/get_toggled_status",
+       type: "get",
+        data: {topic: room.concat("/").concat(b), status: current_status},
+        success: function(response) {
+         $(".status").html(response);
+        },
+        error: function(xhr) {
+          document.write('error');
+        }
+      });}
+      else{
+        alert('Your press failed, please reset and press again');
+      }
+     });
+   });
+  
+//   $(document).ready(function() {
+//    $("#but").on('change', function() {
+//   if ($(this).is(':checked')) {
+//     var current_status = 'true';
+//   }
+//   else {
+//     var current_status = 'false';
+//   }
+//   var room = document.getElementById("room").innerHTML;
+//       var b = this.parentNode.parentNode.cells[0].textContent;
+//       $.ajax({
+//        url: "/get_toggled_status",
+//        type: "get",
+//         data: {topic: room.concat("/").concat(b), status: current_status},
+//         success: function(response) {
+//          $(".status").html(response);
+//         },
+//         error: function(xhr) {
+//          //Do Something to handle error
+//         }
+//       });
+
+// });
+// });
+   </script>
+

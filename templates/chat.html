@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %} Device Control {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+
+
+{% block content %}
+<script>
+    function exportTableToExcel(tableID, filename = ''){
+    var downloadLink;
+    var dataType = 'application/vnd.ms-excel';
+    var tableSelect = document.getElementById(tableID);
+    var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    
+    // Specify file name
+    filename = filename?filename+'.xls':'excel_data.xls';
+    
+    // Create download link element
+    downloadLink = document.createElement("a");
+    
+    document.body.appendChild(downloadLink);
+    
+    if(navigator.msSaveOrOpenBlob){
+        var blob = new Blob(['\ufeff', tableHTML], {
+            type: dataType
+        });
+        navigator.msSaveOrOpenBlob( blob, filename);
+    }else{
+        // Create a link to the file
+        downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+    
+        // Setting the file name
+        downloadLink.download = filename;
+        
+        //triggering the function
+        downloadLink.click();
+    }
+}
+</script>
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<div class="pcoded-content">
+    <div class="pcoded-inner-content">
+        <!-- [ breadcrumb ] start -->
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="page-header-title">
+                            <h5 class="m-b-10">Intelligent Chat</h5>
+                        </div>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="javascript:">Funny Smart Chat</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [ breadcrumb ] end -->
+        <div class="main-body">
+            <div class="page-wrapper">
+                <!-- [ Main Content ] start -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h1>Flask Chatbot</h1>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="exampleFormControlSelect1">Enter value: Xem tiêu thụ điện tầng 3 phòng 3 ngày 2/12/2020</label>
+                                                <form action="{{ url_for('get_bot_response') }}" method="post">
+                                                    <input type="text" class="form-control"  name="message" placeholder="message" size="45">
+                                                    <br>
+                                                    <button>Search</button>
+                                                    
+                                            </form>
+                                            </div>
+                                           
+                                    </div>
+                                    
+                                </div>
+                                
+                                {% if mess %}
+                                <p><strong> {{mess}} </strong></p>
+                                {% else %}
+                                {% if items%}
+                            <table id="tblData" class="table  table-bordered">
+                                <thead class="thead-dark">
+                                  <tr>
+                                    <th scope="col">Floor</th>
+                                    <th scope="col">Room</th>
+                                    <th scope="col">Consumption (kW)</th>
+                                    <th scope="col">Date</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for item in items %}
+                                  <tr class='abc'>
+                                    <th scope="row" id = "device">{{item.floor}}</th>
+                                    <td>{{item.room}}</td>
+                                    <td>{{item.consumption}}</td>
+                                    <td>{{item.date}}</td>
+                                  </tr>
+                                  {% endfor %}
+                                  
+                                </tbody>
+                              </table>
+                              <button onclick="exportTableToExcel('tblData' , 'electrical-consumption-data')">Export Table Data To Excel File</button>
+                            {% endif %}
+                            {% endif %}
+                            </div>
+                            
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                <!-- [ Main Content ] end -->
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% endblock javascripts %}
